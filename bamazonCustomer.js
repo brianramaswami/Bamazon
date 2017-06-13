@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var Table = require('cli-table');
+// var Table = require('cli-table');
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -14,10 +14,14 @@ var connection = mysql.createConnection({
 });
 // connect to the mysql server and sql database
 connection.connect(function(err) {
-  if (err) throw err;
+  if (err){ 
+    throw err;
+  }
+  Start();  
 });
 
-function Start(){
+function EnterBamazon(){
+  console.log("");
   inquirer.prompt([
   {
     name: "action",
@@ -39,19 +43,25 @@ function Start(){
       // console.log(itemQuantity);
       var StockQuantity;
       connection.query(query, function(err, res) {
-        console.log(res[0].stock_quantity);        
+        // console.log(res[0].stock_quantity);        
         StockQuantity = res[0].stock_quantity;
-        return;
-      }), function(err){ 
         if (StockQuantity < itemQuantity){
           console.log("Insufficient Quantity!");
+          Start();
         }
-        if (StockQuantity < itemQuantity){
-          
-        } 
-      };
-  });
-};    
+        if (StockQuantity >= itemQuantity){
+          var newStockQuantity = StockQuantity - itemQuantity;
+          var query = "update products set stock_quantity = "+ newStockQuantity + " where item_ID = " + itemID;
+          connection.query(query, function(err, res) {
+            console.log("Thank you for the purchase!")
+          Start();
+          }), function(err){
+      console.log("");
+          };          
+        }
+    });
+  });  
+}  
 
 function DisplayDB(){
 var query = "SELECT item_id, product_name, department_name, price, stock_quantity from products";
@@ -60,10 +70,32 @@ var query = "SELECT item_id, product_name, department_name, price, stock_quantit
         console.log("item_id: " + res[i].item_id + " || product_name: " + res[i].product_name + " || Department Name: " + res[i].department_name + " || Price: " + res[i].price + " || Stock Quantity: " + res[i].stock_quantity);
         console.log("");
       }
+      Start();
     }), function(err){
       console.log("");
-      Start();
-      };
-    }
+    };
+}
 
-DisplayDB();
+
+function Start(){
+  console.log("");
+  console.log("");
+  inquirer.prompt([
+  {
+    name: "action",
+    type: "list",
+    message: "Would you like to Enter Bamazon or Exit Bamazon",
+    choices: ["Display Inventory", "Enter Bamazon", "Exit Bamazon"]
+  }
+  ]).then(function(answer) {
+     if(answer.action == "Enter Bamazon"){
+       EnterBamazon();
+     }
+     if(answer.action == "Exit Bamazon"){
+       console.log("BYE!");
+     }
+     if(answer.action == "Display Inventory"){
+       DisplayDB();
+     }     
+  });
+}

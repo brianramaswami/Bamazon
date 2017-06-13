@@ -51,4 +51,7 @@ values("Lord of the Rings Return of the King (Paperback) ", "Books", 15.00, 100)
 insert into products(product_name, department_name, price, stock_quantity)
 values("Star Wars Revenge of the Sith", "Movies", 20.00, 100);
 
+
+
+USE Bamazon_DB;
 select * from products;
