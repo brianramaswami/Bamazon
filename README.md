@@ -1,3 +1,4 @@
 # Bamazon
 
-![alt text](https://raw.githubusercontent.com/brianramaswami/Bamazon/blob/master/Demo.gif)
+Inline-style: 
+![alt text](https://github.com/brianramaswami/Bamazon/blob/master/Demo.gif)
